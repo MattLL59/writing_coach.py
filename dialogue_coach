@@ -1,0 +1,113 @@
+def get_differentiated_prompts(mode):
+    """Returns a list of prompts based on the selected difficulty mode."""
+    if mode == '1':
+        # Foundation Mode (EL3 - Grade 3 Focus)
+        return {
+            'A': {"text": "Describe a character meeting an unexpected pet. (Focus: Simple Nouns & Verbs)", "word_count": 200},
+            'B': {"text": "Write a short dialogue between two people trying to agree on a movie. (Focus: Basic Punctuation)", "word_count": 150},
+            'C': {"text": "The wind howled... write a story about what happened next. (Focus: Clear Beginning/Middle/End)", "word_count": 250}
+        }
+    else:
+        # Higher Mode (Grade 4 - Grade 9 Focus)
+        return {
+            'A': {"text": "Write a story that ends: '... and the teacher never found out.' (Focus: Ambiguity and Pacing)", "word_count": 300},
+            'B': {"text": "The day that changed everything. (Focus: Complex Sentence Structure and Tension)", "word_count": 300},
+            'C': {"text": "Write a tense conversation using varied dialogue tags. (Focus: Advanced Punctuation and Voice)", "word_count": 350}
+        }
+
+def check_dialogue_logic(text):
+    """
+    Simulates a simple Contextual Suggestion check.
+    Rule: Checks for two potential speakers' lines without a paragraph break.
+    (This is a very basic check, as complex parsing is needed for a real app.)
+    """
+    lines = text.split('\n')
+    suggestion_needed = False
+    
+    for i in range(len(lines) - 1):
+        line1 = lines[i].strip()
+        line2 = lines[i+1].strip()
+        
+        # A rough check for dialogue tags to simulate two speakers back-to-back
+        dialogue_tags = ["said", "replied", "asked", "whispered", "insisted"]
+        
+        has_tag1 = any(tag in line1.lower() for tag in dialogue_tags)
+        has_tag2 = any(tag in line2.lower() for tag in dialogue_tags)
+        
+        # If two lines containing dialogue tags are typed without a blank line between them, trigger the rule.
+        if has_tag1 and has_tag2 and lines[i+1] != "":
+            suggestion_needed = True
+            break
+            
+    if suggestion_needed:
+        return ("⚠️ **Contextual Suggestion (Punctuation):** It looks like you have two characters speaking back-to-back. "
+                "Remember the golden rule for dialogue: **start a new paragraph every time a new character speaks.**")
+    return None
+
+def main():
+    print("✨ Welcome to the Basic Creative Writing Coach Prototype! ✨")
+    
+    # 1. MODE SELECTION (DIFFERENTIATION)
+    print("\n--- 1. Mode Selection ---")
+    print("1: Foundation/Retake (EL3 - Grade 3 Focus)")
+    print("2: Higher/Advanced (Grade 4 - Grade 9 Focus)")
+    mode = input("Select a mode (1 or 2): ")
+    
+    if mode not in ['1', '2']:
+        print("Invalid selection. Exiting.")
+        return
+
+    prompts = get_differentiated_prompts(mode)
+
+    # 2. PROMPT SELECTION
+    print("\n--- 2. Prompt Selection ---")
+    for key, data in prompts.items():
+        print(f"[{key}] {data['text']} (Goal: {data['word_count']} words)")
+        
+    prompt_choice = input("Select a prompt (A, B, or C): ").upper()
+    
+    if prompt_choice not in prompts:
+        print("Invalid prompt choice. Exiting.")
+        return
+
+    selected_prompt = prompts[prompt_choice]
+    print(f"\n--- 3. Writing Workspace ---")
+    print(f"📝 Prompt: {selected_prompt['text']}")
+    print(f"🎯 Goal: {selected_prompt['word_count']} words.")
+    print("--- Start Writing (Type 'DONE' on a new line when finished) ---")
+
+    # 3. WRITING SIMULATION
+    content = []
+    while True:
+        line = input()
+        if line.upper() == 'DONE':
+            break
+        content.append(line)
+        
+    student_text = '\n'.join(content)
+    word_count = len(student_text.split())
+
+    # 4. REVIEW AND FEEDBACK
+    print("\n--- 4. Review and Feedback ---")
+    
+    # Word Count Check
+    print(f"Word Count: {word_count} words.")
+    if word_count < selected_prompt['word_count'] * 0.8: # Tolerance of 20%
+        print(f"⚠️ **Exam Constraint:** Your response ({word_count} words) is significantly short of the goal ({selected_prompt['word_count']} words).")
+    
+    # Contextual Suggestion Check
+    dialogue_feedback = check_dialogue_logic(student_text)
+    if dialogue_feedback:
+        print(f"\n{dialogue_feedback}")
+    else:
+        print("\n✅ Good work on your basic dialogue structure and paragraphing!")
+
+    # Hybrid Workflow Reminder
+    print("\n--- Hybrid Workflow Reminder ---")
+    print("📌 **Action Required:** Your digital draft is complete. Now, transfer this piece by hand to your notebook to practice your handwriting and exam presentation.")
+    
+    print("\nPrototype complete. Thank you for testing!")
+
+# Run the main function
+if __init__ == "__main__":
+    main()
